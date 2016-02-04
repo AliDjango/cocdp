@@ -105,8 +105,8 @@ def process_sc(data, basename, savedir):
     ofslist= struct.unpack_from("<%dH" % nr, data, o)
     o += 2*nr
     strlist= []
-    for i in xrange(nr):
-        print "%s  %d" % (basename, i)
+    for i in range(nr):
+        print("%s  %d" % (basename, i))
         s, o= unpackstr(data, o)
         strlist.append(s)
     d= {}
@@ -129,7 +129,7 @@ def process_sc(data, basename, savedir):
             elif bmt==4:
                 pixelsize=2
             else:
-                print "unknown pixeltype: %d" % (bmt)
+                print("unknown pixeltype: %d" % (bmt))
 
             bmpsize= bmw*bmh*pixelsize
 
@@ -138,27 +138,27 @@ def process_sc(data, basename, savedir):
 
             i += 1
 
-            print "=%02x=%02x  %d x %d   .. bmpsize=%x, left=%x" % (t, bmt, bmw, bmh, bmpsize, l-bmpsize-5)
+            print("=%02x=%02x  %d x %d   .. bmpsize=%x, left=%x" % (t, bmt, bmw, bmh, bmpsize, l-bmpsize-5))
         else:
-            print "=%02x=%s" % (t, data[o:o+l].encode("hex"))
+            print("=%02x=%s" % (t, data[o:o+l].encode("hex")))
         o += l
     if o<len(data):
-        print "leftover: %s" % data[o:].encode("hex")
+        print("leftover: %s" % data[o:].encode("hex"))
 
-    print "%5d , %5d: 12"                 % (h[0], d.pop(18, 0))
-    print "%5d , %5d: 0c"                 % (h[1], d.pop(12, 0))
-    print "%5d , %5d: 01    - bitmaps"    % (h[2], d.pop(1, 0))
-    print "%5d , %5d: 07/0f"              % (h[3], d.pop(7, 0)+d.pop(15, 0))
-    print "%5d , %5d: 08"                 % (h[4], d.pop(8, 0))
-    print "%5d , %5d: 09"                 % (h[5], d.pop(9, 0))
+    print("%5d , %5d: 12"                 % (h[0], d.pop(18, 0)))
+    print("%5d , %5d: 0c"                 % (h[1], d.pop(12, 0)))
+    print("%5d , %5d: 01    - bitmaps"    % (h[2], d.pop(1, 0)))
+    print("%5d , %5d: 07/0f"              % (h[3], d.pop(7, 0)+d.pop(15, 0)))
+    print("%5d , %5d: 08"                 % (h[4], d.pop(8, 0)))
+    print("%5d , %5d: 09"                 % (h[5], d.pop(9, 0)))
 
     for t in d:
-        print "        %5d: %02x" % (d[t], t)
+        print("        %5d: %02x" % (d[t], t))
     if h[6] != "\x00" * 5:
-        print "h6: %s" % h[6].encode("hex")
+        print("h6: %s" % h[6].encode("hex"))
 
-    for i in xrange(nr):
-        print " * %5d: %04x '%s'" % (i, ofslist[i], strlist[i])
+    for i in range(nr):
+        print(" * %5d: %04x '%s'" % (i, ofslist[i], strlist[i]))
 
 
 parser = argparse.ArgumentParser(description='Print information, or extract bitmaps from CoC (decompressed) .sc files')

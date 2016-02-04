@@ -67,7 +67,7 @@ def create_xml(cfg):
     """ convert config dict to xml """
     xml= "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n"
     xml += "<map>\n"
-    for k,v in cfg.items():
+    for k,v in list(cfg.items()):
         xml += "    <string name=\"%s\">%s</string>\n" % (xml_escape(k), xml_escape(v))
     xml += "</map>\n"
 
@@ -98,7 +98,7 @@ def decode_xml(xml, key):
     dec= {}
 
     keycipher= makekeycipher(key)
-    for k, v in enc.items():
+    for k, v in list(enc.items()):
         valcipher= makevalcipher(key)
         dec[decrypt(k, keycipher)]= decrypt(v, valcipher)
 
@@ -112,7 +112,7 @@ def encode_xml(cfg, key):
     enc= {}
 
     keycipher= makekeycipher(key)
-    for k, v in cfg.items():
+    for k, v in list(cfg.items()):
         valcipher= makevalcipher(key)
         enc[encrypt(k, keycipher)]= encrypt(v, valcipher)
 
@@ -123,7 +123,7 @@ def encode_xml(cfg, key):
 def handle_fh(fh, args):
     xml= fh.read()
     cfg= decode_xml(xml, args.from_)
-    print encode_xml(cfg, args.to)
+    print(encode_xml(cfg, args.to))
 
 def handle_xmlfile(fn, args):
     with open(fn) as fh:

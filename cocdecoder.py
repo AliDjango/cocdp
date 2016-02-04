@@ -1,5 +1,6 @@
-from cocutils import *
-from cocmessages import *
+from cocdp.cocutils import *
+from cocdp.cocmessages import *
+import codecs
 """
 PacketDecoder can be used to print decoded messages: 'display'
 or to decode and dispatch using 'processmessage'
@@ -11,20 +12,20 @@ class PacketDecoder:
     def decodesimple(self, data, name, decoder):    # cap
         if decoder:
             f, o= unpackmessage(decoder, data)
-            print "%s: %s" % (name, f)
+            print("%s: %s" % (name, f))
         else:
             o= 0
-            print "%s" % (name)
+            print("%s" % (name))
         if o<len(data):
-            print "WARNING: rest: %s" % (data[o:].encode("hex"))
+            print("WARNING: rest: %s" % (codecs.encode(data[o:],"hex")))
 
     def versioned(self, msg):
         if type(msg)==str:
             return msg
-        for k,v in msg.items():
+        for k,v in list(msg.items()):
             if self.versionmatch(k):
                 return v
-        print "TODO: scan version list %s  in %s" % (self.version, msg)
+        print("TODO: scan version list %s  in %s" % (self.version, msg))
 
     def versionmatch(self, spec):
         if spec==self.version:
@@ -73,26 +74,26 @@ class PacketDecoder:
                     getattr(delegate, "handle_"+msg["name"])(data, obj)
 
                 if o==0 and len(data)>0:
-                    print "TODO: %s(%d): %s" % (msg["name"], msgid, data.encode("hex"))
+                    print("TODO: %s(%d): %s" % (msg["name"], msgid, codecs.encode(data,"hex")))
                 elif o<len(data):
-                    print "WARNING: unprocessed(%d): %s" % (msgid, data[o:].encode("hex"))
+                    print("WARNING: unprocessed(%d): %s" % (msgid, codecs.encode(data[o:],"hex")))
 
                 if obj:
                     obj.__= msgname
 
             else:
-                print "WARNING: unknown msg: %d: %s" % (msgid, data.encode("hex"))
+                print("WARNING: unknown msg: %d: %s" % (msgid, codecs.encode(data,"hex")))
                 obj= None
 
-        except Exception, e:
-            print "ERROR: %s: in %s(%d) at offset %d in %s" % (e, msgname, msgid, o, data.encode("hex"))
+        except Exception as e:
+            print("ERROR: %s: in %s(%d) at offset %d in %s" % (e, msgname, msgid, o, codecs.encode(data,"hex")))
             #raise
 
         return obj, o
 
     def display(self, msgid, obj):
         if not msgid in msgtypes:
-            print "WARNING: Strange - unknown msgid(%d) in display" % (msgid)
+            print("WARNING: Strange - unknown msgid(%d) in display" % (msgid))
             return
         msg= msgtypes[msgid]
 
@@ -103,7 +104,7 @@ class PacketDecoder:
         # todo: handle special values, like globalid's
         #     or named constants
         if "display" in msg:
-            print "%s %s" % (msg["name"], msg["displayformat"] % getfields(obj, msg["display"]))
+            print("%s %s" % (msg["name"], msg["displayformat"] % getfields(obj, msg["display"])))
         else:
             dumpobj(obj)
 
@@ -131,7 +132,7 @@ class PacketDecoder:
             item.__= cmd["name"]
             return item, o
         else:
-            print "WARNING: unknown cmd: %d: %s" % (cmdid, data[o:].encode("hex"))
+            print("WARNING: unknown cmd: %d: %s" % (cmdid, codecs.encode(data[o:],"hex")))
         return None, o
 
     def decode_EndClientTurn(self, data, o, obj):
@@ -168,7 +169,7 @@ class PacketDecoder:
             count += 1
 
         if count!=nractions:
-            print "WARNING: Too few Actions(%d), expected(%d)" % (count, nractions)
+            print("WARNING: Too few Actions(%d), expected(%d)" % (count, nractions))
         return obj, o
 
     def decode_AllianceStreamMessage(self, data, o):
@@ -190,7 +191,7 @@ class PacketDecoder:
             item.__= stm["name"]
             return item, o
         else:
-            print "WARNING: unknown lstm: %d: %s" % (stmid, data[o:].encode("hex"))
+            print("WARNING: unknown lstm: %d: %s" % (stmid, codecs.encode(data[o:],"hex")))
         return None, o
 
 
@@ -214,7 +215,7 @@ class PacketDecoder:
             count += 1
 
         if count!=nrmsgs:
-            print "WARNING: Too few Messages(%d), expected(%d)" % (count, nrmsgs)
+            print("WARNING: Too few Messages(%d), expected(%d)" % (count, nrmsgs))
         return obj, o
 
     def decode_AvatarStreamMessage(self, data, o):
@@ -236,7 +237,7 @@ class PacketDecoder:
             item.__= stm["name"]
             return item, o
         else:
-            print "WARNING: unknown vstm: %d: %s" % (stmid, data[o:].encode("hex"))
+            print("WARNING: unknown vstm: %d: %s" % (stmid, codecs.encode(data[o:],"hex")))
         return None, o
 
     def decode_AvatarStream(self, data, o, obj):
@@ -258,7 +259,7 @@ class PacketDecoder:
             count += 1
 
         if count!=nrmsgs:
-            print "WARNING: Too few Messages(%d), expected(%d)" % (count, nrmsgs)
+            print("WARNING: Too few Messages(%d), expected(%d)" % (count, nrmsgs))
         return obj, o
 
 

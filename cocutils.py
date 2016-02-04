@@ -40,7 +40,7 @@ def negate(num):
 class prng:
     def __init__(self, seed):
         self.seed= seed
-    def next(self):
+    def __next__(self):
         v3= self.seed if self.seed else 0xffffffff
 
         v3 ^= lshift(v3,13)
@@ -54,7 +54,7 @@ class prng:
 
 def scramble(data, seed):
     rng= prng(seed)
-    return "".join(chr(ord(c)^rng.next()) for c in data)
+    return "".join(chr(ord(c)^next(rng)) for c in data)
 
 class scramble7prng:
     def __init__(self, seed):
@@ -63,8 +63,8 @@ class scramble7prng:
         self.seedbuffer(seed)
     def dumpbuffer(self):
         for x in self.buffer:
-            print " %08x" % x,
-        print
+            print(" %08x" % x, end=' ')
+        print()
     def seedbuffer(self, seed):
         for i in range(624):
             self.buffer[i]= seed
@@ -159,7 +159,7 @@ def packmessage(fmt, items):
     """
     data= ""
     for t,item in zip(fmt, items):
-        print "-- %s: %s: %s" % (t, type(item), item)
+        print("-- %s: %s: %s" % (t, type(item), item))
         if t=="s":
             data += makestring(item)
         elif t=="d":
@@ -281,7 +281,7 @@ def unpackobject(fmt, fields, data, o=0):
             #print "#: '%s'  '%s'" % (sfmt, sfld)
             count, o= getdword(data, o)
             val= []
-            for i in xrange(count):
+            for i in range(count):
                 item, o= unpackobject(sfmt, sfld, data, o)
                 val.append(item)
         else:
@@ -294,9 +294,9 @@ def unpackobject(fmt, fields, data, o=0):
         obj.__fields.append(fn)
         setattr(obj, fn, val)
         itemnr += 1
-      except Exception, e:
-        print "fmt: %d of %s" % (ifmt, fmt)
-        print "EXCEPTION %s: at %d" % (e, o)
+      except Exception as e:
+        print("fmt: %d of %s" % (ifmt, fmt))
+        print("EXCEPTION %s: at %d" % (e, o))
         raise
 
 #   if ifmt<len(fmt) or ifield<len(fields):
@@ -388,16 +388,16 @@ def packobject(fmt, fields, obj, var=None):
             #print "#: '%s'  '%s'" % (sfmt, sfld)
             count= len(getattr(obj, fn))
             data += makedword(count)
-            for i in xrange(count):
+            for i in range(count):
                 data += packobject(sfmt, sfld, getattr(obj, fn)[i], var)
         else:
             raise Exception("unksupported format: %s" % t)
         if not keepbitmask:
             bitmask= 0
         itemnr += 1
-      except Exception, e:
-        print "fmt: %d of %s" % (ifmt, fmt)
-        print "EXCEPTION %s: at %s" % (e, fn)
+      except Exception as e:
+        print("fmt: %d of %s" % (ifmt, fmt))
+        print("EXCEPTION %s: at %s" % (e, fn))
         raise
     return data
 
@@ -422,23 +422,23 @@ def dumpobj(obj, l=1):
     recursively pretty print contents of a python object.
     """
     if hasattr(obj, '__'):
-        print "%s%s" % ("  " * l, obj.__)
+        print("%s%s" % ("  " * l, obj.__))
     if hasattr(obj, '__fields'):
         fields = obj.__fields
     else:
-        fields = vars(obj).keys()
+        fields = list(vars(obj).keys())
     for k in fields:
         v = getattr(obj, k)
         if type(v)==type(obj):
-            print "%s%s: {" % ("  " * l, k)
+            print("%s%s: {" % ("  " * l, k))
             dumpobj(v, l+1)
-            print "%s}" % ("  " * l)
+            print("%s}" % ("  " * l))
         elif type(v)==type([]):
-            print "%s%s: [" % ("  " * l, k)
+            print("%s%s: [" % ("  " * l, k))
             for i in range(len(v)):
-                print "%s[%d]=" % ("  " * (l+1), i)
+                print("%s[%d]=" % ("  " * (l+1), i))
                 dumpobj(v[i], l+2)
-            print "%s]" % ("  " * l)
+            print("%s]" % ("  " * l))
         elif type(v)==str:
             if v[3:6]=="\x00\x78\x9c":
                 fullsize,= struct.unpack("<L", v[0:4])
@@ -447,17 +447,17 @@ def dumpobj(obj, l=1):
                 if v[0] == '{':
                     v = json.dumps(json.loads(v), indent=4)
                     v = ("  " * l).join(v.splitlines(True))
-            print "%s%s: \"%s\"" % ("  " * l, k, v)
+            print("%s%s: \"%s\"" % ("  " * l, k, v))
         elif type(v)==int:
             if v>1000000 and (v%1000000)<1000:
                 # print resource id's as decimal
-                print "%s%s: %d" % ("  " * l, k, v)
+                print("%s%s: %d" % ("  " * l, k, v))
             else:
                 if v == 0:
-                    print "%s%s: 0x%x" % ("  " * l, k, v)
+                    print("%s%s: 0x%x" % ("  " * l, k, v))
                 else:
-                    print "%s%s: 0x%x (%d)" % ("  " * l, k, v, v)
+                    print("%s%s: 0x%x (%d)" % ("  " * l, k, v, v))
         else:
-            print "%s%s: %s" % ("  " * l, k, v)
+            print("%s%s: %s" % ("  " * l, k, v))
 
 

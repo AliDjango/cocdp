@@ -8,7 +8,7 @@ def convert_key(s):
 def KSA(key):
     keylength = len(key)
 
-    S = range(256)
+    S = list(range(256))
 
     j = 0
     for i in range(256):

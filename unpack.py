@@ -77,4 +77,4 @@ else:
 cocutils.dumpobj(obj)
 
 if o<len(data):
-    print "left: %s" % data[o:].encode("hex")
+    print("left: %s" % data[o:].encode("hex"))

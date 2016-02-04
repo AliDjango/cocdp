@@ -26,9 +26,10 @@ def makerc4(nonce):
     rc= rc4.RC4(rc4key+nonce)
     # skip keylen bytes
     for i in range(len(rc4key)+len(nonce)):
-        rc.next()
+        next(rc)
     return rc
 
+i
 if args.key:
     clientseed= int(args.seed, 0)
     svrrandom= args.key.decode("hex")
@@ -39,10 +40,10 @@ if args.key:
 elif args.nonce:
     nonce= args.nonce.decode("hex")
 
-print "nonce=%s" % nonce.encode("hex")
+print("nonce=%s" % nonce.encode("hex"))
 rc= makerc4(nonce)
 for i in range(512):
-    print "%02x" % rc.next(),
+    print("%02x" % next(rc), end=' ')
     if (i%32)==31:
-        print
+        print()
 

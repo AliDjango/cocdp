@@ -1,4 +1,4 @@
-import lzmaffi as lzma
+import lzma
 import sys
 
 """
@@ -15,12 +15,12 @@ for fn in sys.argv[1:]:
             data=fh.read()
             data=data[0:9]+("\x00" * 4)+data[9:]
             if n>2:
-                print "==> %s <==" % (fn)
+                print("==> %s <==" % (fn))
             sys.stdout.write(lz.decompress(data))
             if n>2:
-                print
-                print
+                print()
+                print()
     except:
         e = sys.exc_info()[0]
-        print "<p>Error: %s</p>" % e
+        print("<p>Error: %s</p>" % e)
 

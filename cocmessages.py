@@ -386,16 +386,16 @@ Build named constants for all commands and messages.
 class empty:
     pass
 CMD= empty()
-for k, v in cmdtypes.items():
+for k, v in list(cmdtypes.items()):
     setattr(CMD, v["name"], k)
 MSG= empty()
-for k, v in msgtypes.items():
+for k, v in list(msgtypes.items()):
     setattr(MSG, v["name"], k)
 LSTM= empty()
-for k, v in lstmtypes.items():
+for k, v in list(lstmtypes.items()):
     setattr(LSTM, v["name"], k)
 VSTM= empty()
-for k, v in vstmtypes.items():
+for k, v in list(vstmtypes.items()):
     setattr(VSTM, v["name"], k)
 
 
